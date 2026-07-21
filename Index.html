@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowFix Plumbing (DEMO) — Book a Plumber Online</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --navy:#0B1B2B;
+  --navy-soft:#13294A;
+  --blue:#2E5EFF;
+  --blue-dark:#1E40C7;
+  --blue-tint:#EEF2FF;
+  --copper:#FF7A45;
+  --copper-dark:#E05A25;
+  --copper-tint:#FFF1EA;
+  --bg:#F6F8FC;
+  --surface:#FFFFFF;
+  --border:#E5E9F1;
+  --text:#101828;
+  --text-dim:#5B6472;
+  --text-faint:#8A93A3;
+  --success:#12B76A;
+  --success-tint:#E7F9F0;
+  --radius-sm:8px;
+  --radius:14px;
+  --radius-lg:20px;
+  --shadow-sm:0 1px 2px rgba(16,24,40,0.06);
+  --shadow-md:0 8px 24px rgba(16,24,40,0.08);
+  --shadow-lg:0 24px 48px rgba(16,24,40,0.14);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{ scroll-behavior:smooth; }
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,h5{ font-family:'Sora',sans-serif; font-weight:700; color:var(--navy); line-height:1.15; letter-spacing:-0.01em; }
+a{ color:inherit; text-decoration:none; }
+img{ max-width:100%; display:block; }
+button{ font-family:'Inter',sans-serif; cursor:pointer; border:none; background:none; }
+input,select,textarea{ font-family:'Inter',sans-serif; }
+:focus-visible{ outline:2.5px solid var(--blue); outline-offset:2px; }
+::selection{ background:var(--blue); color:white; }
+.wrap{ max-width:1180px; margin:0 auto; padding:0 28px; }
+.icon{ width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
+  color:var(--blue-dark); background:var(--blue-tint); padding:6px 12px; border-radius:999px;
+}
+
+.btn{
+  display:inline-flex; align-items:center; gap:8px; justify-content:center;
+  padding:13px 22px; border-radius:10px; font-weight:600; font-size:14.5px;
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  white-space:nowrap;
+}
+.btn:hover{ transform:translateY(-1px); }
+.btn-primary{ background:var(--blue); color:white; box-shadow:0 6px 16px rgba(46,94,255,0.28); }
+.btn-primary:hover{ background:var(--blue-dark); box-shadow:0 10px 22px rgba(46,94,255,0.35); }
+.btn-copper{ background:var(--copper); color:white; box-shadow:0 6px 16px rgba(255,122,69,0.3); }
+.btn-copper:hover{ background:var(--copper-dark); }
+.btn-ghost{ background:var(--surface); border:1.5px solid var(--border); color:var(--navy); }
+.btn-ghost:hover{ border-color:var(--blue); color:var(--blue-dark); }
+.btn-light{ background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.28); color:white; }
+.btn-light:hover{ background:rgba(255,255,255,0.2); }
+.btn-sm{ padding:9px 14px; font-size:13px; border-radius:8px; }
+.btn-block{ width:100%; }
+
+.card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-sm); }
+
+/* ===== NAV ===== */
+header.site{ position:sticky; top:0; z-index:60; background:rgba(246,248,252,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); }
+.nav{ display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:1180px; margin:0 auto; }
+.brand{ display:flex; align-items:center; gap:10px; font-family:'Sora'; font-weight:700; font-size:19px; color:var(--navy); }
+.brand .mark{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg, var(--blue), var(--copper));
+  display:flex;align-items:center;justify-content:center; color:white; font-size:15px; font-weight:800; font-family:'Sora';
+}
+.navlinks{ display:flex; gap:30px; font-size:14.5px; font-weight:600; color:var(--text-dim); }
+.navlinks a:hover{ color:var(--navy); }
+.nav-cta{ display:flex; gap:12px; align-items:center; }
+.call-pill{ display:none; align-items:center; gap:7px; font-size:13.5px; font-weight:600; color:var(--text-dim); }
+@media(min-width:640px){ .call-pill{ display:inline-flex; } }
+@media(max-width:900px){ .navlinks{ display:none; } }
+.demo-banner{
+  background:var(--navy); color:#D6DEEC; font-size:13px; text-align:center; padding:9px 16px;
+}
+.demo-banner b{ color:#FFB088; }
+.demo-banner a{ text-decoration:underline; color:#8FB0FF; }
+
+/* ===== HERO ===== */
+.hero{ position:relative; overflow:hidden; padding:64px 0 90px; }
+.hero::before{
+  content:''; position:absolute; inset:0; z-index:0;
+  background:
+    radial-gradient(560px 360px at 82% -8%, rgba(46,94,255,0.14), transparent 60%),
+    radial-gradient(420px 300px at 8% 30%, rgba(255,122,69,0.12), transparent 60%);
+}
+.hero-grid{ display:grid; grid-template-columns:1.05fr 0.95fr; gap:54px; align-items:start; position:relative; z-index:1; }
+@media(max-width:980px){ .hero-grid{ grid-template-columns:1fr; } }
+.hero h1{ font-size:clamp(36px,5vw,58px); margin:18px 0 20px; }
+.hero h1 span{ color:var(--blue); }
+.hero p.lead{ font-size:17px; color:var(--text-dim); max-width:460px; margin-bottom:30px; }
+.trust-row{ display:flex; flex-wrap:wrap; gap:22px 26px; margin-top:34px; }
+.trust-item{ display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600; color:var(--text-dim); }
+.trust-item .icon{ width:17px; height:17px; color:var(--success); }
+
+/* Booking panel */
+.book-panel{ background:var(--surface); border-radius:var(--radius-lg); box-shadow:var(--shadow-lg); padding:28px 26px 24px; border:1px solid var(--border); }
+.book-panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.book-panel-head h3{ font-size:19px; }
+.step-count{ font-size:12.5px; font-weight:600; color:var(--text-faint); }
+.progress-track{ height:5px; background:var(--border); border-radius:3px; margin:14px 0 22px; overflow:hidden; }
+.progress-fill{ height:100%; width:25%; background:linear-gradient(90deg, var(--blue), var(--copper)); transition:width .3s ease; border-radius:3px; }
+
+.step{ display:none; }
+.step.active{ display:block; animation:fadeIn .25s ease; }
+@keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+.service-dial{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:4px; }
+.svc-btn{
+  background:var(--surface); border:1.5px solid var(--border); border-radius:12px;
+  padding:14px; text-align:left; transition:all .15s ease;
+  display:flex; align-items:center; gap:10px;
+}
+.svc-btn .icon{ width:19px; height:19px; color:var(--blue); flex-shrink:0; }
+.svc-btn .lbl{ font-weight:600; font-size:13.5px; color:var(--navy); }
+.svc-btn.sel, .svc-btn:hover{ border-color:var(--blue); background:var(--blue-tint); }
+.svc-btn.sel .icon{ color:var(--blue-dark); }
+
+.field{ margin-bottom:14px; }
+.field label{ display:block; font-size:12.5px; font-weight:700; margin-bottom:6px; color:var(--text-dim); }
+.field input, .field select, .field textarea{
+  width:100%; padding:12px 13px; border:1.5px solid var(--border); border-radius:9px;
+  font-size:14.5px; background:var(--surface); color:var(--text); transition:border-color .15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--blue); }
+.field.err input{ border-color:#E23636; }
+.field .errmsg{ font-size:12px; color:#E23636; margin-top:5px; display:none; }
+.field.err .errmsg{ display:block; }
+.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.three-col{ display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:12px; }
+@media(max-width:420px){ .three-col{ grid-template-columns:1fr; } }
+
+.slot-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:6px; }
+.slot{ border:1.5px solid var(--border); border-radius:9px; padding:9px 6px; text-align:center; font-size:12.5px; font-weight:600; color:var(--text-dim); }
+.slot.sel, .slot:hover{ border-color:var(--blue); background:var(--blue-tint); color:var(--blue-dark); }
+.day-chip-row{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:14px; }
+.day-chip{ flex:0 0 auto; border:1.5px solid var(--border); border-radius:10px; padding:10px 14px; text-align:center; min-width:60px; }
+.day-chip .d{ font-size:11px; color:var(--text-faint); font-weight:600; }
+.day-chip .n{ font-weight:700; font-size:17px; font-family:'Sora'; color:var(--navy); }
+.day-chip.sel, .day-chip:hover{ border-color:var(--blue); background:var(--blue-tint); }
+
+.step-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:18px; gap:10px; }
+.link-btn{ font-weight:600; font-size:13.5px; color:var(--text-dim); }
+.link-btn:hover{ color:var(--navy); }
+
+.summary-card{ background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:16px; }
+.summary-row{ display:flex; justify-content:space-between; gap:12px; font-size:13.5px; padding:7px 0; border-bottom:1px dashed var(--border); }
+.summary-row:last-child{ border-bottom:none; }
+.summary-row .k{ color:var(--text-dim); }
+.summary-row .v{ font-weight:600; text-align:right; }
+
+.confirm-box{ text-align:center; padding:16px 6px 6px; }
+.confirm-box .check{ width:56px; height:56px; border-radius:50%; background:var(--success-tint); color:var(--success); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+.confirm-box .check .icon{ width:26px; height:26px; }
+.confirm-box h3{ font-size:21px; margin-bottom:8px; }
+.confirm-box p{ font-size:13.5px; color:var(--text-dim); max-width:320px; margin:0 auto; }
+.confirm-ref{ font-size:12.5px; font-weight:700; background:var(--bg); display:inline-block; padding:7px 14px; border-radius:8px; margin-top:16px; color:var(--navy); border:1px solid var(--border); }
+
+section{ padding:90px 0; }
+.sec-head{ max-width:600px; margin-bottom:46px; }
+.sec-head h2{ font-size:clamp(28px,3.6vw,40px); margin-top:14px; }
+.sec-head p{ color:var(--text-dim); font-size:15.5px; margin-top:14px; }
+.sec-head.center{ margin-left:auto; margin-right:auto; text-align:center; }
+
+.why-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+@media(max-width:900px){ .why-grid{ grid-template-columns:repeat(2,1fr);} }
+@media(max-width:560px){ .why-grid{ grid-template-columns:1fr;} }
+.why-item{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px; }
+.why-item .icon-wrap{ width:40px;height:40px;border-radius:10px; background:var(--blue-tint); color:var(--blue); display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
+.why-item h4{ font-size:15.5px; margin-bottom:6px; }
+.why-item p{ font-size:13.5px; color:var(--text-dim); }
+
+.svc-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+@media(max-width:900px){ .svc-grid{ grid-template-columns:repeat(2,1fr);} }
+@media(max-width:600px){ .svc-grid{ grid-template-columns:1fr;} }
+.svc-card{ background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:26px; transition:transform .18s, box-shadow .18s; }
+.svc-card:hover{ transform:translateY(-4px); box-shadow:var(--shadow-md); }
+.svc-card .icon-wrap{ width:44px;height:44px;border-radius:12px; background:var(--copper-tint); color:var(--copper-dark); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+.svc-card h4{ font-size:17.5px; margin-bottom:8px; }
+.svc-card p{ font-size:13.5px; color:var(--text-dim); margin-bottom:14px; }
+.svc-card a{ font-size:13px; font-weight:700; color:var(--blue-dark); display:inline-flex; align-items:center; gap:5px; }
+
+.social-wrap{ background:var(--navy); color:#D6DEEC; }
+.social-wrap .eyebrow{ background:rgba(255,255,255,0.1); color:#FFB088; }
+.social-wrap .sec-head h2{ color:white; }
+.social-wrap .sec-head p{ color:rgba(214,222,236,0.7); }
+.rating-strip{ display:flex; gap:36px; flex-wrap:wrap; margin-bottom:42px; }
+.rating-block{ display:flex; align-items:center; gap:14px; }
+.rating-block .score{ font-family:'Sora'; font-size:36px; font-weight:800; color:white; }
+.rating-block .meta{ font-size:12.5px; color:rgba(214,222,236,0.65); }
+.stars{ color:#FFB088; letter-spacing:2px; }
+
+.ig-grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+@media(max-width:900px){ .ig-grid{ grid-template-columns:repeat(3,1fr);} }
+@media(max-width:560px){ .ig-grid{ grid-template-columns:repeat(2,1fr);} }
+.ig-tile{ aspect-ratio:1/1; border-radius:10px; position:relative; overflow:hidden; display:flex; align-items:flex-end; padding:10px; font-size:11px; font-weight:600; color:rgba(255,255,255,0.92); }
+.ig-tile::after{ content:''; position:absolute; inset:0; background:linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.55)); }
+.ig-tile span{ position:relative; z-index:1; }
+.ig-cta{ margin-top:20px; display:flex; align-items:center; gap:10px; font-size:13.5px; color:rgba(214,222,236,0.7); }
+
+.review-cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px; }
+@media(max-width:900px){ .review-cards{ grid-template-columns:1fr; } }
+.review-card{ background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:14px; padding:20px; }
+.review-card .stars{ margin-bottom:10px; display:block; }
+.review-card p{ font-size:13.5px; color:rgba(214,222,236,0.85); margin-bottom:14px; }
+.review-card .who{ font-size:11.5px; color:rgba(214,222,236,0.5); font-weight:600; }
+
+.coverage{ display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:center; }
+@media(max-width:900px){ .coverage{ grid-template-columns:1fr; } }
+.suburb-list{ display:flex; flex-wrap:wrap; gap:9px; margin-top:20px; }
+.suburb-chip{ font-size:12.5px; font-weight:600; border:1px solid var(--border); background:var(--surface); border-radius:999px; padding:8px 14px; }
+.map-frame{ aspect-ratio:4/3; border-radius:16px; background:linear-gradient(135deg, var(--blue-tint), var(--copper-tint)); border:1px solid var(--border); position:relative; overflow:hidden; }
+.map-frame .pin{ position:absolute; width:26px; height:26px; color:var(--copper-dark); }
+
+.emerg-band{ background:linear-gradient(120deg, #FF7A45, #E0472A); color:white; text-align:center; padding:60px 0; }
+.emerg-band h2{ color:white; font-size:clamp(26px,3.6vw,36px); margin-bottom:14px; }
+.emerg-band p{ color:rgba(255,255,255,0.9); margin-bottom:26px; }
+.emerg-actions{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+footer{ background:var(--navy); color:rgba(214,222,236,0.7); padding:60px 0 26px; font-size:13.5px; }
+.foot-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+@media(max-width:800px){ .foot-grid{ grid-template-columns:1fr 1fr; } }
+footer h5{ color:white; font-size:12.5px; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:14px; font-weight:700; }
+footer ul{ list-style:none; display:flex; flex-direction:column; gap:9px; }
+footer a:hover{ color:white; }
+.foot-bottom{ border-top:1px solid rgba(255,255,255,0.1); padding-top:22px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:12px; }
+.social-icons{ display:flex; gap:10px; margin-top:14px; }
+.social-icons a{ width:34px; height:34px; border-radius:9px; border:1px solid rgba(255,255,255,0.18); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+.social-icons a:hover{ border-color:var(--copper); color:var(--copper); }
+
+/* ===== DASHBOARD ===== */
+.dash-body{ background:var(--bg); min-height:100vh; }
+.dash-shell{ display:grid; grid-template-columns:250px 1fr; min-height:100vh; }
+@media(max-width:860px){ .dash-shell{ grid-template-columns:1fr; } .dash-sidebar{ display:none; } }
+.dash-sidebar{ background:var(--navy); color:rgba(214,222,236,0.85); padding:22px 18px; display:flex; flex-direction:column; gap:6px; }
+.dash-sidebar .brand{ color:white; padding:6px 8px 22px; }
+.dash-nav a{ display:flex; align-items:center; gap:11px; padding:11px 12px; border-radius:9px; font-size:14px; font-weight:600; color:rgba(214,222,236,0.75); }
+.dash-nav a .icon{ width:18px; height:18px; }
+.dash-nav a:hover{ background:rgba(255,255,255,0.06); color:white; }
+.dash-nav a.active{ background:rgba(46,94,255,0.18); color:#8FB0FF; }
+.dash-sidebar .foot-note{ margin-top:auto; font-size:12px; color:rgba(214,222,236,0.4); padding:12px 8px; }
+
+.dash-main{ padding:28px 32px 60px; max-width:1180px; }
+.dash-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:26px; flex-wrap:wrap; gap:14px; }
+.dash-top h1{ font-size:25px; }
+.dash-top p{ color:var(--text-dim); font-size:14px; margin-top:4px; }
+
+.stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
+@media(max-width:900px){ .stat-grid{ grid-template-columns:repeat(2,1fr); } }
+.stat-card{ padding:20px; }
+.stat-card .k{ font-size:12.5px; font-weight:600; color:var(--text-dim); margin-bottom:10px; display:flex; align-items:center; gap:7px; }
+.stat-card .v{ font-family:'Sora'; font-size:28px; font-weight:700; color:var(--navy); }
+.stat-card .icon{ width:15px; height:15px; }
+
+.dash-grid{ display:grid; grid-template-columns:1.15fr 0.85fr; gap:20px; align-items:start; }
+@media(max-width:980px){ .dash-grid{ grid-template-columns:1fr; } }
+.panel{ padding:22px; }
+.panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.panel-head h3{ font-size:16.5px; }
+.panel-head .btn{ padding:8px 12px; font-size:12.5px; }
+
+table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+thead th{ text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:0.03em; color:var(--text-faint); font-weight:700; padding:8px 10px; border-bottom:1px solid var(--border); }
+tbody td{ padding:12px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+tbody tr:last-child td{ border-bottom:none; }
+.badge{ display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px; font-size:11.5px; font-weight:700; }
+.badge-new{ background:var(--blue-tint); color:var(--blue-dark); }
+.badge-confirmed{ background:var(--success-tint); color:var(--success); }
+.badge-done{ background:#F2F4F7; color:var(--text-dim); }
+.empty-state{ text-align:center; padding:34px 10px; color:var(--text-faint); font-size:13.5px; }
+
+.inbox-list{ display:flex; flex-direction:column; gap:2px; max-height:520px; overflow-y:auto; }
+.inbox-item{ display:flex; gap:12px; padding:13px 8px; border-bottom:1px solid var(--border); }
+.inbox-item:last-child{ border-bottom:none; }
+.ch-badge{ width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:white; flex-shrink:0; }
+.ch-ig{ background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); }
+.ch-fb{ background:#1877F2; }
+.ch-wa{ background:#25D366; }
+.inbox-body{ flex:1; min-width:0; }
+.inbox-top{ display:flex; justify-content:space-between; gap:8px; }
+.inbox-name{ font-weight:700; font-size:13.5px; color:var(--navy); }
+.inbox-time{ font-size:11.5px; color:var(--text-faint); white-space:nowrap; }
+.inbox-msg{ font-size:12.5px; color:var(--text-dim); margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.unread-dot{ width:8px; height:8px; border-radius:50%; background:var(--blue); flex-shrink:0; margin-top:5px; }
+
+.setup-banner{ background:linear-gradient(120deg, var(--blue-tint), var(--copper-tint)); border:1px solid var(--border); border-radius:14px; padding:16px 18px; font-size:13px; color:var(--text-dim); margin-bottom:26px; display:flex; gap:12px; align-items:flex-start; }
+.setup-banner .icon{ color:var(--blue); flex-shrink:0; margin-top:2px; }
+.setup-banner b{ color:var(--navy); }
+
+</style>
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg style="display:none">
+  <symbol id="ic-check" viewBox="0 0 24 24"><polyline points="4 12 9 17 20 6"/></symbol>
+  <symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><polyline points="9 12 11.5 14.5 15.5 10"/></symbol>
+  <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></symbol>
+  <symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></symbol>
+  <symbol id="ic-droplet" viewBox="0 0 24 24"><path d="M12 3c4 5 7 8.5 7 12a7 7 0 0 1-14 0c0-3.5 3-7 7-12z"/></symbol>
+  <symbol id="ic-flame" viewBox="0 0 24 24"><path d="M12 2c-3 4-6 7-6 11a6 6 0 0012 0c0-2-1-3-2-4 .3 2-1 3-2 3-1 0-1.5-1.2-1-2.3.6-1.3 0-3.3-1-7.7z"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6" fill="currentColor"/></symbol>
+  <symbol id="ic-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></symbol>
+  <symbol id="ic-wrench" viewBox="0 0 24 24"><path d="M14.2 3a4.3 4.3 0 00-5.8 5.9L4 13.3v3.4h3.4l4.4-4.4a4.3 4.3 0 005.9-5.8l-2.9 2.9-2.1-2.1z"/></symbol>
+  <symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3l10 17.5H2L12 3z"/><line x1="12" y1="9.5" x2="12" y2="14"/><circle cx="12" cy="17" r="0.7" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="ic-mappin" viewBox="0 0 24 24"><path d="M12 22s7-7.5 7-12a7 7 0 10-14 0c0 4.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="ic-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .3 2 .6 2.9a2 2 0 01-.5 2.1L8 9.9a16 16 0 006 6l1.2-1.2a2 2 0 012.1-.5c.9.3 1.9.5 2.9.6a2 2 0 011.8 2.1z"/></symbol>
+  <symbol id="ic-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+  <symbol id="ic-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></symbol>
+</svg>
+
+<div class="demo-banner">This is a <b>concept demo</b> for a website &amp; booking system redesign — placeholder business, copy &amp; reviews. See the <a href="dashboard.html">plumber's admin dashboard →</a></div>
+
+<header class="site">
+  <div class="nav">
+    <div class="brand"><span class="mark">FF</span> FlowFix</div>
+    <nav class="navlinks">
+      <a href="#services">Services</a>
+      <a href="#book">Book Online</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#coverage">Coverage Area</a>
+    </nav>
+    <div class="nav-cta">
+      <span class="call-pill"><svg class="icon" style="width:15px;height:15px;"><use href="#ic-phone"/></svg>0400 000 000</span>
+      <a href="#book" class="btn btn-primary">Book a Plumber</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><svg class="icon" style="width:14px;height:14px;"><use href="#ic-shield"/></svg>Licensed &amp; insured · Northern Adelaide</span>
+      <h1>Book a plumber<br>in <span>under 2 minutes.</span></h1>
+      <p class="lead">FlowFix is a local plumbing &amp; gas team. Pick a real available slot online and you're booked instantly — no phone tag, no "we'll call you back."</p>
+      <div class="trust-row">
+        <div class="trust-item"><svg class="icon"><use href="#ic-check"/></svg>Upfront pricing</div>
+        <div class="trust-item"><svg class="icon"><use href="#ic-check"/></svg>Same-day slots</div>
+        <div class="trust-item"><svg class="icon"><use href="#ic-check"/></svg>24/7 emergency line</div>
+        <div class="trust-item"><svg class="icon"><use href="#ic-check"/></svg>Licensed &amp; insured</div>
+      </div>
+    </div>
+
+    <div class="book-panel" id="book">
+      <div class="book-panel-head">
+        <h3>Book online</h3>
+        <span class="step-count" id="stepCount">Step 1 of 4</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+      <!-- STEP 1: Service -->
+      <div class="step active" data-step="1">
+        <div class="field"><label>What do you need done?</label></div>
+        <div class="service-dial" id="serviceDial">
+          <button type="button" class="svc-btn" data-svc="Hot Water"><svg class="icon"><use href="#ic-flame"/></svg><span class="lbl">Hot Water</span></button>
+          <button type="button" class="svc-btn" data-svc="Blocked Drain"><svg class="icon"><use href="#ic-target"/></svg><span class="lbl">Blocked Drain</span></button>
+          <button type="button" class="svc-btn" data-svc="Leaking Tap"><svg class="icon"><use href="#ic-droplet"/></svg><span class="lbl">Leaking Tap</span></button>
+          <button type="button" class="svc-btn" data-svc="Gas Fitting"><svg class="icon"><use href="#ic-gear"/></svg><span class="lbl">Gas Fitting</span></button>
+          <button type="button" class="svc-btn" data-svc="Pipe Relining"><svg class="icon"><use href="#ic-wrench"/></svg><span class="lbl">Pipe Relining</span></button>
+          <button type="button" class="svc-btn" data-svc="Emergency"><svg class="icon"><use href="#ic-alert"/></svg><span class="lbl">Emergency</span></button>
+        </div>
+        <div class="field err" id="svcErr" style="margin-top:8px;"><span class="errmsg">Pick a service to continue</span></div>
+        <div class="step-actions">
+          <span></span>
+          <button type="button" class="btn btn-primary" id="toStep2">Continue <svg class="icon" style="width:16px;height:16px;"><use href="#ic-arrow"/></svg></button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Date & time -->
+      <div class="step" data-step="2">
+        <div class="field"><label>Pick a day</label></div>
+        <div class="day-chip-row" id="dayRow"></div>
+        <div class="field"><label>Available slots</label></div>
+        <div class="slot-grid" id="slotGrid"></div>
+        <div class="step-actions">
+          <button type="button" class="link-btn" id="back1">← Back</button>
+          <button type="button" class="btn btn-primary" id="toStep3">Continue <svg class="icon" style="width:16px;height:16px;"><use href="#ic-arrow"/></svg></button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Details -->
+      <div class="step" data-step="3">
+        <div class="two-col">
+          <div class="field" id="f-name"><label>Full name *</label><input type="text" id="custName" placeholder="Jane Smith"><span class="errmsg">Enter your name</span></div>
+          <div class="field" id="f-phone"><label>Phone *</label><input type="tel" id="custPhone" placeholder="04xx xxx xxx"><span class="errmsg">Enter a phone number</span></div>
+        </div>
+        <div class="field" id="f-email"><label>Email *</label><input type="email" id="custEmail" placeholder="jane@email.com"><span class="errmsg">Enter a valid email</span></div>
+        <div class="field" id="f-address"><label>Street address *</label><input type="text" id="custAddress" placeholder="12 Smith Street"><span class="errmsg">Enter your address</span></div>
+        <div class="three-col">
+          <div class="field" id="f-suburb"><label>Suburb *</label><input type="text" id="custSuburb" placeholder="Ridgehaven"><span class="errmsg">Enter your suburb</span></div>
+          <div class="field"><label>State</label><input type="text" id="custState" value="SA"></div>
+          <div class="field" id="f-postcode"><label>Postcode *</label><input type="text" id="custPostcode" placeholder="5097"><span class="errmsg">Enter postcode</span></div>
+        </div>
+        <div class="field"><label>Preferred contact method</label>
+          <select id="custContactPref"><option>Phone call</option><option>SMS</option><option>Email</option><option>WhatsApp</option></select>
+        </div>
+        <div class="field"><label>Anything we should know? (optional)</label><input type="text" id="custNote" placeholder="e.g. unit 3, dog in the yard"></div>
+        <div class="step-actions">
+          <button type="button" class="link-btn" id="back2">← Back</button>
+          <button type="button" class="btn btn-primary" id="toStep4">Review booking <svg class="icon" style="width:16px;height:16px;"><use href="#ic-arrow"/></svg></button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Confirm -->
+      <div class="step" data-step="4">
+        <div id="reviewView">
+          <div class="summary-card" id="summaryCard"></div>
+          <div class="step-actions">
+            <button type="button" class="link-btn" id="back3">← Back</button>
+            <button type="button" class="btn btn-copper" id="confirmBtn">Confirm booking</button>
+          </div>
+        </div>
+        <div class="confirm-box" id="confirmView" style="display:none;">
+          <div class="check"><svg class="icon"><use href="#ic-check"/></svg></div>
+          <h3>Booking locked in</h3>
+          <p>A confirmation would normally be sent by SMS &amp; email right now. Your job just landed on FlowFix's dashboard — <a href="dashboard.html" style="color:var(--blue-dark); font-weight:700; text-decoration:underline;">see it appear here →</a></p>
+          <div class="confirm-ref" id="refCode"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="why-grid">
+    <div class="why-item"><div class="icon-wrap"><svg class="icon"><use href="#ic-check"/></svg></div><h4>Upfront pricing</h4><p>Quoted price before we start. No surprise call-out fees.</p></div>
+    <div class="why-item"><div class="icon-wrap"><svg class="icon"><use href="#ic-calendar"/></svg></div><h4>Real-time booking</h4><p>See actual open slots and lock one in — no waiting on a callback.</p></div>
+    <div class="why-item"><div class="icon-wrap"><svg class="icon"><use href="#ic-clock"/></svg></div><h4>Same-day service</h4><p>Most jobs booked before 11am get seen the same day.</p></div>
+    <div class="why-item"><div class="icon-wrap"><svg class="icon"><use href="#ic-shield"/></svg></div><h4>Licensed &amp; insured</h4><p>Fully licensed plumbers and gas fitters, every job covered.</p></div>
+  </div>
+</div>
+
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">What we do</span>
+      <h2>One team, every pipe problem.</h2>
+      <p>From a dripping tap to a full gas fit-out — pick a service below to jump straight into booking.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card"><div class="icon-wrap"><svg class="icon"><use href="#ic-flame"/></svg></div><h4>Hot Water</h4><p>Repairs, replacements &amp; installs across gas, electric and solar systems.</p><a href="#book">Book this <svg class="icon" style="width:14px;height:14px;"><use href="#ic-arrow"/></svg></a></div>
+      <div class="svc-card"><div class="icon-wrap"><svg class="icon"><use href="#ic-target"/></svg></div><h4>Blocked Drains</h4><p>Drain camera inspections, hydrojetting and root removal.</p><a href="#book">Book this <svg class="icon" style="width:14px;height:14px;"><use href="#ic-arrow"/></svg></a></div>
+      <div class="svc-card"><div class="icon-wrap"><svg class="icon"><use href="#ic-droplet"/></svg></div><h4>Leaking Taps</h4><p>Kitchen, bathroom, laundry &amp; outdoor tap repairs and replacements.</p><a href="#book">Book this <svg class="icon" style="width:14px;height:14px;"><use href="#ic-arrow"/></svg></a></div>
+      <div class="svc-card"><div class="icon-wrap"><svg class="icon"><use href="#ic-gear"/></svg></div><h4>Gas Fitting</h4><p>Leak detection, appliance installs and compliance safety checks.</p><a href="#book">Book this <svg class="icon" style="width:14px;height:14px;"><use href="#ic-arrow"/></svg></a></div>
+      <div class="svc-card"><div class="icon-wrap"><svg class="icon"><use href="#ic-wrench"/></svg></div><h4>Pipe Relining</h4><p>No-dig sewer repairs that skip the excavation entirely.</p><a href="#book">Book this <svg class="icon" style="width:14px;height:14px;"><use href="#ic-arrow"/></svg></a></div>
+      <div class="svc-card"><div class="icon-wrap"><svg class="icon"><use href="#ic-alert"/></svg></div><h4>Emergency Callout</h4><p>24/7 response for burst pipes, gas leaks and flooding.</p><a href="#book">Book this <svg class="icon" style="width:14px;height:14px;"><use href="#ic-arrow"/></svg></a></div>
+    </div>
+  </div>
+</section>
+
+<section class="social-wrap" id="reviews">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Trusted locally</span>
+      <h2>What the neighbourhood says.</h2>
+      <p>Reviews and the Instagram feed would sync live from the real accounts — this demo uses placeholder content in their place.</p>
+    </div>
+
+    <div class="rating-strip">
+      <div class="rating-block"><div class="score">4.9</div><div class="meta"><div class="stars">★★★★★</div>Google · 128 reviews</div></div>
+      <div class="rating-block"><div class="score">5.0</div><div class="meta"><div class="stars">★★★★★</div>Facebook · 64 reviews</div></div>
+    </div>
+
+    <div class="ig-grid">
+      <div class="ig-tile" style="background:linear-gradient(135deg,#2E5EFF,#0B1B2B);"><span>@flowfix.demo</span></div>
+      <div class="ig-tile" style="background:linear-gradient(135deg,#FF7A45,#7a3a1f);"><span>Job of the week</span></div>
+      <div class="ig-tile" style="background:linear-gradient(135deg,#0B1B2B,#2E5EFF);"><span>Before / after</span></div>
+      <div class="ig-tile" style="background:linear-gradient(135deg,#9C6530,#FF7A45);"><span>Meet the team</span></div>
+      <div class="ig-tile" style="background:linear-gradient(135deg,#124D52,#0B1B2B);"><span>Behind the van</span></div>
+      <div class="ig-tile" style="background:linear-gradient(135deg,#0B1B2B,#9C6530);"><span>Customer shoutout</span></div>
+    </div>
+    <div class="ig-cta">Placeholder grid — connects to the real @flowfix Instagram feed once live.</div>
+
+    <div class="review-cards">
+      <div class="review-card"><span class="stars">★★★★★</span><p>"Booked online in under two minutes and someone was out the same afternoon. Didn't have to call anyone."</p><div class="who">— Placeholder review, Ridgehaven</div></div>
+      <div class="review-card"><span class="stars">★★★★★</span><p>"Upfront price before they started, no surprises on the invoice. Exactly what was quoted."</p><div class="who">— Placeholder review, Tea Tree Gully</div></div>
+      <div class="review-card"><span class="stars">★★★★★</span><p>"Emergency gas leak on a Sunday and they picked up straight away. Sorted within the hour."</p><div class="who">— Placeholder review, Surrey Downs</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="coverage">
+  <div class="wrap coverage">
+    <div>
+      <span class="eyebrow">Service area</span>
+      <h2>Northern Adelaide &amp; around.</h2>
+      <p style="color:var(--text-dim); margin-top:14px; font-size:15px;">Based in Ridgehaven, covering the surrounding suburbs with same-day availability.</p>
+      <div class="suburb-list">
+        <span class="suburb-chip">Ridgehaven</span>
+        <span class="suburb-chip">Tea Tree Gully</span>
+        <span class="suburb-chip">St Agnes</span>
+        <span class="suburb-chip">Surrey Downs</span>
+        <span class="suburb-chip">Modbury</span>
+        <span class="suburb-chip">Golden Grove</span>
+        <span class="suburb-chip">Hope Valley</span>
+      </div>
+    </div>
+    <div class="map-frame">
+      <svg class="pin" style="top:38%; left:44%;" viewBox="0 0 24 24" fill="currentColor"><use href="#ic-mappin"/></svg>
+      <svg class="pin" style="top:55%; left:60%;" viewBox="0 0 24 24" fill="currentColor"><use href="#ic-mappin"/></svg>
+      <svg class="pin" style="top:25%; left:66%;" viewBox="0 0 24 24" fill="currentColor"><use href="#ic-mappin"/></svg>
+    </div>
+  </div>
+</section>
+
+<div class="emerg-band">
+  <div class="wrap">
+    <h2>Burst pipe? Gas smell? Don't wait.</h2>
+    <p>24/7 emergency line — a real person picks up, day or night.</p>
+    <div class="emerg-actions">
+      <a href="tel:0400000000" class="btn btn-light"><svg class="icon"><use href="#ic-phone"/></svg>Call Now — 0400 000 000</a>
+      <a href="#book" class="btn" style="background:white; color:var(--copper-dark);">Book online instead</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="brand" style="color:white;"><span class="mark">FF</span> FlowFix</div>
+        <p style="margin-top:14px; max-width:260px;">Demo concept for a local plumbing &amp; gas business — built to show what a modern site + booking flow could look like.</p>
+        <div class="social-icons">
+          <a href="#" aria-label="Instagram">IG</a>
+          <a href="#" aria-label="Facebook">FB</a>
+          <a href="#" aria-label="Google">G</a>
+        </div>
+      </div>
+      <div>
+        <h5>Services</h5>
+        <ul><li><a href="#services">Hot Water</a></li><li><a href="#services">Blocked Drains</a></li><li><a href="#services">Gas Fitting</a></li><li><a href="#services">Emergency</a></li></ul>
+      </div>
+      <div>
+        <h5>Company</h5>
+        <ul><li><a href="#reviews">Reviews</a></li><li><a href="#coverage">Coverage Area</a></li><li><a href="#book">Book Online</a></li><li><a href="dashboard.html">Plumber Login (demo)</a></li></ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul><li>0400 000 000</li><li>hello@flowfix.demo</li><li>Ridgehaven, SA 5097</li></ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 FlowFix Plumbing — demo concept, not a real business.</span>
+      <span>Built as a website redesign concept</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const state = { service:null, day:null, time:null, name:'', phone:'', email:'', address:'', suburb:'', stateAU:'SA', postcode:'', contactPref:'Phone call', note:'' };
+  const totalSteps = 4;
+
+  const stepEls = document.querySelectorAll('.step');
+  const progressFill = document.getElementById('progressFill');
+  const stepCount = document.getElementById('stepCount');
+
+  function showStep(n){
+    stepEls.forEach(el => el.classList.toggle('active', +el.dataset.step === n));
+    progressFill.style.width = (n/totalSteps*100) + '%';
+    stepCount.textContent = 'Step ' + n + ' of ' + totalSteps;
+    document.getElementById('book').scrollIntoView({block:'nearest'});
+  }
+
+  // Step 1
+  document.querySelectorAll('.svc-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.svc-btn').forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
+      state.service = btn.dataset.svc;
+      document.getElementById('svcErr').classList.remove('err');
+    });
+  });
+  document.getElementById('toStep2').addEventListener('click', ()=>{
+    if(!state.service){ document.getElementById('svcErr').classList.add('err'); return; }
+    buildDays(); showStep(2);
+  });
+
+  // Step 2
+  const dayRow = document.getElementById('dayRow');
+  const slotGrid = document.getElementById('slotGrid');
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const times = ['8:00 AM','9:30 AM','11:00 AM','1:00 PM','2:30 PM','4:00 PM'];
+
+  function buildDays(){
+    dayRow.innerHTML = '';
+    const today = new Date();
+    for(let i=0;i<7;i++){
+      const d = new Date(today); d.setDate(today.getDate()+i);
+      const chip = document.createElement('div');
+      chip.className = 'day-chip' + (i===0 ? ' sel':'');
+      chip.innerHTML = `<div class="d">${i===0?'Today':dayNames[d.getDay()]}</div><div class="n">${d.getDate()}</div>`;
+      const label = i===0 ? 'Today ('+(d.getMonth()+1)+'/'+d.getDate()+')' : dayNames[d.getDay()]+' '+(d.getMonth()+1)+'/'+d.getDate();
+      chip.addEventListener('click', ()=>{
+        document.querySelectorAll('.day-chip').forEach(c=>c.classList.remove('sel'));
+        chip.classList.add('sel');
+        state.day = label;
+      });
+      if(i===0) state.day = label;
+      dayRow.appendChild(chip);
+    }
+    buildSlots();
+  }
+  function buildSlots(){
+    slotGrid.innerHTML = '';
+    times.forEach((t,i)=>{
+      const s = document.createElement('div');
+      s.className = 'slot' + (i===1?' sel':'');
+      s.textContent = t;
+      if(i===1) state.time = t;
+      s.addEventListener('click', ()=>{
+        document.querySelectorAll('.slot').forEach(x=>x.classList.remove('sel'));
+        s.classList.add('sel');
+        state.time = t;
+      });
+      slotGrid.appendChild(s);
+    });
+  }
+
+  document.getElementById('back1').addEventListener('click', ()=>showStep(1));
+  document.getElementById('toStep3').addEventListener('click', ()=>showStep(3));
+
+  // Step 3 — validation
+  function setErr(id, on){ document.getElementById(id).classList.toggle('err', on); }
+  document.getElementById('back2').addEventListener('click', ()=>showStep(2));
+  document.getElementById('toStep4').addEventListener('click', ()=>{
+    state.name = document.getElementById('custName').value.trim();
+    state.phone = document.getElementById('custPhone').value.trim();
+    state.email = document.getElementById('custEmail').value.trim();
+    state.address = document.getElementById('custAddress').value.trim();
+    state.suburb = document.getElementById('custSuburb').value.trim();
+    state.stateAU = document.getElementById('custState').value.trim();
+    state.postcode = document.getElementById('custPostcode').value.trim();
+    state.contactPref = document.getElementById('custContactPref').value;
+    state.note = document.getElementById('custNote').value.trim();
+
+    let ok = true;
+    const emailOk = /\S+@\S+\.\S+/.test(state.email);
+    setErr('f-name', !state.name); if(!state.name) ok=false;
+    setErr('f-phone', !state.phone); if(!state.phone) ok=false;
+    setErr('f-email', !emailOk); if(!emailOk) ok=false;
+    setErr('f-address', !state.address); if(!state.address) ok=false;
+    setErr('f-suburb', !state.suburb); if(!state.suburb) ok=false;
+    setErr('f-postcode', !state.postcode); if(!state.postcode) ok=false;
+    if(!ok) return;
+
+    buildSummary();
+    showStep(4);
+  });
+
+  function buildSummary(){
+    document.getElementById('summaryCard').innerHTML = `
+      <div class="summary-row"><span class="k">Service</span><span class="v">${state.service}</span></div>
+      <div class="summary-row"><span class="k">When</span><span class="v">${state.day} · ${state.time}</span></div>
+      <div class="summary-row"><span class="k">Name</span><span class="v">${state.name}</span></div>
+      <div class="summary-row"><span class="k">Phone</span><span class="v">${state.phone}</span></div>
+      <div class="summary-row"><span class="k">Email</span><span class="v">${state.email}</span></div>
+      <div class="summary-row"><span class="k">Address</span><span class="v">${state.address}, ${state.suburb} ${state.stateAU} ${state.postcode}</span></div>
+      <div class="summary-row"><span class="k">Preferred contact</span><span class="v">${state.contactPref}</span></div>
+      ${state.note ? `<div class="summary-row"><span class="k">Note</span><span class="v">${state.note}</span></div>` : ''}
+    `;
+  }
+
+  document.getElementById('back3').addEventListener('click', ()=>showStep(3));
+  document.getElementById('confirmBtn').addEventListener('click', ()=>{
+    document.getElementById('reviewView').style.display = 'none';
+    document.getElementById('confirmView').style.display = 'block';
+    const ref = 'FF-' + Math.random().toString(36).slice(2,7).toUpperCase();
+    document.getElementById('refCode').textContent = 'Reference: ' + ref;
+
+    try{
+      const bookings = JSON.parse(localStorage.getItem('flowfix_bookings') || '[]');
+      bookings.unshift({
+        ref, service:state.service, day:state.day, time:state.time,
+        name:state.name, phone:state.phone, email:state.email,
+        address:state.address, suburb:state.suburb, stateAU:state.stateAU, postcode:state.postcode,
+        contactPref:state.contactPref, note:state.note,
+        status:'New', createdAt:new Date().toISOString()
+      });
+      localStorage.setItem('flowfix_bookings', JSON.stringify(bookings));
+    }catch(e){}
+  });
+})();
+</script>
+
+</body>
+</html>
